@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+	<TableRow android:orientation="horizontal"
+	 android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:id="@+id/tableRowText"
+		android:layout_alignParentTop="true"
+		android:visibility="visible" 
+		android:layout_gravity="fill_horizontal|bottom">
+	<TextView android:id="@+id/widthText" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Width"
+		android:layout_weight="1"
+		 />
+	<TextView android:id="@+id/heightText" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Height"
+		android:layout_weight="1"
+		 />		
+	</TableRow>			  
+	<TableRow android:orientation="horizontal"
+	 android:layout_width="fill_parent"
+		android:layout_height="50dip" android:id="@+id/tableRow1"
+		android:layout_below="@+id/tableRowText"
+		android:visibility="visible" 
+		android:layout_gravity="fill_horizontal|bottom">
+		<EditText android:layout_width="fill_parent" android:numeric="decimal" android:id="@+id/width" android:layout_weight="1"
+		android:text="640" android:layout_height="wrap_content"></EditText>
+		<EditText android:layout_width="fill_parent" android:numeric="decimal" android:id="@+id/height" android:layout_weight="1"
+		android:text="480" android:layout_height="wrap_content"></EditText>
+	</TableRow>    
+	<TableRow android:orientation="horizontal"
+	 android:layout_width="fill_parent"
+		android:layout_height="50dip" android:id="@+id/tableButtonRow"
+		android:layout_below="@+id/tableRow1"
+		android:visibility="visible" 
+		android:layout_gravity="fill_horizontal|bottom">
+		<Button android:text="More Lines" android:layout_alignParentTop="true"
+		android:id="@+id/moreButton" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:layout_weight="1"></Button>
+		<Button android:text="Fewer Lines" android:layout_alignParentTop="true"
+		android:id="@+id/lessButton" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:layout_weight="1"></Button>
+		<Button android:text="Save Image" android:layout_alignParentTop="true"
+		android:id="@+id/saveButton" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:layout_weight="1"></Button>
+		
+	</TableRow> 
+		<ImageView android:id="@+id/ImageView01" android:scaleType="fitStart"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_below="@+id/tableButtonRow" />
+	
+    
+	<com.google.ads.AdView android:id="@+id/adView"
+		android:layout_alignParentBottom="true" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" ads:adUnitId="a14defb5c2de03b"
+		ads:adSize="BANNER" ads:loadAdOnCreate="false" />
+    
+    
+    
+</RelativeLayout>
