@@ -15,6 +15,15 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="GoogleAdMobAdsSdk-4.1.0" level="project" />
     <orderEntry type="module" module-name="library" />
+    <orderEntry type="module-library">
+      <library name="Crashlytics">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/crashlytics.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

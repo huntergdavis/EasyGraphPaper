@@ -1,5 +1,6 @@
 package com.hunterdavis.easygraphpaper;
 
+import com.crashlytics.android.Crashlytics;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -48,6 +49,8 @@ public class EasyGraphPaper extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Crashlytics.start(this);
+
 		setContentView(R.layout.main);
 
 		// Set onclicklisteners for the buttons
@@ -325,7 +328,6 @@ public class EasyGraphPaper extends Activity {
                 usingImage = scaleURIAndDisplay(getApplicationContext(), selectedImageUri);
 
                 if(usingImage) {
-                    Log.e("got here", "got here hunter ------------------");
                     regenLines(true);
                 }
             }

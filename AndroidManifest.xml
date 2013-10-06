@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.hunterdavis.easygraphpaper"
-      android:versionCode="1"
-      android:versionName="1.01">
+      android:versionCode="2"
+      android:versionName="2.00">
     <uses-sdk android:minSdkVersion="7" />
 <uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -18,6 +18,7 @@
         </activity>
         <activity android:name="com.google.ads.AdActivity"
 			android:configChanges="keyboard|keyboardHidden|orientation" />
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="b6953669386d07bd74f4bf3c7af2429ca36e629d"/>
 
     </application>
 </manifest>
