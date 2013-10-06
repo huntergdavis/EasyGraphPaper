@@ -4,13 +4,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Random;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -24,13 +27,22 @@ import android.provider.MediaStore;
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
 
+import uk.co.senab.photoview.PhotoViewAttacher;
+
 public class EasyGraphPaper extends Activity {
-	/** Called when the activity is first created. */
+
+    // our photo return code
+    static final int SELECT_PICTURE = 22;
 
 	private int lineDensity = 20;
 	private int width = 640;
 	private int height = 480;
 	private Bitmap staticBitmap = null;
+    private Bitmap loadedImageBitmap = null;
+    private boolean usingImage = false;
+    PhotoViewAttacher mAttacher;
+    ImageView mImageView;
+    int currentColor = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +57,7 @@ public class EasyGraphPaper extends Activity {
 				if (lineDensity < 1) {
 					lineDensity = 5;
 				} else {
-					regenLines();
+					regenLines(usingImage);
 				}
 			}
 		};
@@ -58,7 +70,7 @@ public class EasyGraphPaper extends Activity {
 				if ((lineDensity > (width / 2)) || (lineDensity > (height / 2))) {
 					lineDensity -= 5;
 				} else {
-					regenLines();
+					regenLines(usingImage);
 				}
 			}
 		};
@@ -80,13 +92,83 @@ public class EasyGraphPaper extends Activity {
 		Button saveButton = (Button) findViewById(R.id.saveButton);
 		saveButton.setOnClickListener(saveButtonListner);
 
+
+
+
+        Button loadButton = (Button) findViewById(R.id.loadButton);
+        loadButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                load();
+            }
+        });
+
+        Button clearButton = (Button) findViewById(R.id.xButton);
+        clearButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clear();
+            }
+        });
+
+
 		// Look up the AdView as a resource and load a request.
 		AdView adView = (AdView) this.findViewById(R.id.adView);
 		adView.loadAd(new AdRequest());
+
+        // Any implementation of ImageView can be used!
+        mImageView = (ImageView) findViewById(R.id.ImageView01);
+
+        // Attach a PhotoViewAttacher, which takes care of all of the zooming functionality.
+        mAttacher = new PhotoViewAttacher(mImageView);
+
+
+        // pick color button
+        // listener for frequency button
+        OnClickListener colorListener = new OnClickListener() {
+            public void onClick(View v) {
+                changeColor();
+            }
+
+        };
+
+
+        Button mycolorbutton = (Button) findViewById(R.id.colorButton);
+        mycolorbutton.setOnClickListener(colorListener);
 		
-		regenLines();
+		regenLines(false);
 		
 	}
+
+    public void changeColor() {
+
+        ColorPickerDialog.OnColorChangedListener ourchangelistener = new ColorPickerDialog.OnColorChangedListener() {
+            @Override
+            public void colorChanged(int color) {
+                currentColor = color;
+                regenLines(usingImage);
+            }
+        };
+        new ColorPickerDialog(EasyGraphPaper.this, ourchangelistener, 333444).show();
+    }
+
+    public void clear() {
+        usingImage = false;
+        regenLines(false);
+    }
+
+    public void load() {
+        // do something when the button is clicked
+
+        // in onCreate or any event where your want the user to
+        // select a file
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(
+                Intent.createChooser(intent, "Select Source Photo"),
+                SELECT_PICTURE);
+    }
 	
 	public void updateHeightWidth(){
 		EditText widthText = (EditText) findViewById(R.id.width);
@@ -95,26 +177,60 @@ public class EasyGraphPaper extends Activity {
 		width = Integer.parseInt(widthText.getText().toString());
 	}
 
-	public void regenLines() {
-		ImageView imgView = (ImageView) findViewById(R.id.ImageView01);
-		updateHeightWidth();
+    public void updateHeightWidthDisplayFromValues() {
+        EditText widthText = (EditText) findViewById(R.id.width);
+        EditText heightText = (EditText) findViewById(R.id.height);
 
-		int rgbSize = width * height;
-		int[] rgbValues = new int[rgbSize];
-		for (int i = 0; i < rgbSize; i++) {
-			rgbValues[i] = calculatePixelValue(i);
-		}
+        widthText.setText("" + width);
+        heightText.setText("" + height);
+    }
+
+	public void regenLines(boolean useImage) {
+		updateHeightWidth();
 
 		// create a width*height bitmap
 		BitmapFactory.Options staticOptions = new BitmapFactory.Options();
 		//staticOptions.inSampleSize = 2;
-		staticBitmap = Bitmap.createBitmap(rgbValues, width, height,
-				Bitmap.Config.RGB_565);
+
+        if(useImage) {
+            staticBitmap = Bitmap.createBitmap(loadedImageBitmap);
+            paintPicture();
+        }else {
+            int rgbSize = width * height;
+            int[] rgbValues = new int[rgbSize];
+            for (int i = 0; i < rgbSize; i++) {
+                rgbValues[i] = calculatePixelValue(i);
+            }
+            staticBitmap = Bitmap.createBitmap(rgbValues, width, height,
+                    Bitmap.Config.RGB_565);
+        }
 
 		// set the imageview to the static
-		imgView.setImageBitmap(staticBitmap);
+		mImageView.setImageBitmap(staticBitmap);
+        mAttacher.update();
 
 	}
+
+    public void paintPicture() {
+        // get our spacing values
+        int xSpacing = (int) Math.floor(width/lineDensity);
+        int ySpacing = (int) Math.floor(height/lineDensity);
+
+        for(int i = 0; i< width; i++) {
+            for (int j = 0; j < height; j++) {
+                // test for x line
+                if((i % xSpacing) == 0)
+                {
+                    staticBitmap.setPixel(i,j,currentColor);
+                }
+                // test for y line
+                if((j % ySpacing) == 0)
+                {
+                    staticBitmap.setPixel(i,j,currentColor);
+                }
+            }
+        }
+    }
 	
 	public Integer calculatePixelValue(int location)
 	{
@@ -124,8 +240,7 @@ public class EasyGraphPaper extends Activity {
 		
 		// set our white and black values 
 		int White = Integer.MAX_VALUE;
-		int Black = 0;
-		
+
 		// get our spacing values
 		int xSpacing = (int) Math.floor(width/lineDensity);
 		int ySpacing = (int) Math.floor(height/lineDensity);
@@ -133,15 +248,15 @@ public class EasyGraphPaper extends Activity {
 		// test for x line
 		if((xLocation % xSpacing) == 0)
 		{
-			return Black;
+			return currentColor;
 		}
 		// test for y line
 		if((yLocation % ySpacing) == 0)
 		{
-			return Black;
+			return currentColor;
 		}
 		
-		
+
 		return White;
 	}
 
@@ -194,4 +309,44 @@ public class EasyGraphPaper extends Activity {
 		return false;
 	}
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Uri selectedImageUri = data.getData();
+                usingImage = scaleURIAndDisplay(getApplicationContext(), selectedImageUri);
+
+                if(usingImage) {
+                    regenLines(true);
+                }
+            }
+        }
+    }
+
+
+    public Boolean scaleURIAndDisplay(Context context, Uri uri) {
+        InputStream photoStream = null;
+
+        try {
+            photoStream = context.getContentResolver().openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 8;
+
+        loadedImageBitmap = BitmapFactory.decodeStream(photoStream, null, options);
+        if (loadedImageBitmap == null) {
+            return false;
+        }
+
+        width = loadedImageBitmap.getWidth();
+        height = loadedImageBitmap.getHeight();
+        updateHeightWidthDisplayFromValues();
+        return true;
+    }
 }
