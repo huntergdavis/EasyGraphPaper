@@ -155,6 +155,10 @@ public class EasyGraphPaper extends Activity {
 
     public void clear() {
         usingImage = false;
+        currentColor = 0;
+        height = 640;
+        width = 480;
+        updateHeightWidthDisplayFromValues();
         regenLines(false);
     }
 
