@@ -37,16 +37,24 @@ xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
 		android:layout_below="@+id/tableRow1"
 		android:visibility="visible" 
 		android:layout_gravity="fill_horizontal|bottom">
-		<Button android:text="More Lines" android:layout_alignParentTop="true"
+		<Button android:text="+ #" android:layout_alignParentTop="true"
 		android:id="@+id/moreButton" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:layout_weight="1"></Button>
-		<Button android:text="Fewer Lines" android:layout_alignParentTop="true"
+		<Button android:text="- #" android:layout_alignParentTop="true"
 		android:id="@+id/lessButton" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:layout_weight="1"></Button>
-		<Button android:text="Save Image" android:layout_alignParentTop="true"
+		<Button android:text="Save" android:layout_alignParentTop="true"
 		android:id="@+id/saveButton" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:layout_weight="1"></Button>
-		
+        <Button android:text="Load" android:layout_alignParentTop="true"
+            android:id="@+id/loadButton" android:layout_width="fill_parent"
+            android:layout_height="wrap_content" android:layout_weight="1"></Button>
+        <Button android:text="Clear" android:layout_alignParentTop="true"
+            android:id="@+id/xButton" android:layout_width="fill_parent"
+            android:layout_height="wrap_content" android:layout_weight="1"></Button>
+        <Button android:text="Color" android:id="@+id/colorButton"
+        android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="1"/>
+
 	</TableRow> 
 		<ImageView android:id="@+id/ImageView01" android:scaleType="fitStart"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"

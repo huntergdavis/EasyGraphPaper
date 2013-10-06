@@ -16,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -193,7 +194,10 @@ public class EasyGraphPaper extends Activity {
 		//staticOptions.inSampleSize = 2;
 
         if(useImage) {
-            staticBitmap = Bitmap.createBitmap(loadedImageBitmap);
+            if(staticBitmap != null) {
+                staticBitmap.recycle();
+            }
+            staticBitmap = loadedImageBitmap.copy(Bitmap.Config.ARGB_8888,true);
             paintPicture();
         }else {
             int rgbSize = width * height;
@@ -317,6 +321,7 @@ public class EasyGraphPaper extends Activity {
                 usingImage = scaleURIAndDisplay(getApplicationContext(), selectedImageUri);
 
                 if(usingImage) {
+                    Log.e("got here", "got here hunter ------------------");
                     regenLines(true);
                 }
             }
@@ -334,11 +339,19 @@ public class EasyGraphPaper extends Activity {
             return false;
         }
 
-
-
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 8;
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(photoStream,null,options);
+        options.inSampleSize = calculateInSampleSize(options, width,height);
 
+        // Decode bitmap with inSampleSize set
+        try {
+            photoStream = context.getContentResolver().openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+        options.inJustDecodeBounds = false;
         loadedImageBitmap = BitmapFactory.decodeStream(photoStream, null, options);
         if (loadedImageBitmap == null) {
             return false;
@@ -348,5 +361,22 @@ public class EasyGraphPaper extends Activity {
         height = loadedImageBitmap.getHeight();
         updateHeightWidthDisplayFromValues();
         return true;
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 2;
+
+        if (height > reqHeight || width > reqWidth) {
+            if (width > height) {
+                inSampleSize = Math.round((float)height / (float)reqHeight);
+            } else {
+                inSampleSize = Math.round((float)width / (float)reqWidth);
+            }
+        }
+        return inSampleSize;
     }
 }

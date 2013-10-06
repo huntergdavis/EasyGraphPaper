@@ -219,6 +219,6 @@ public class ColorPickerDialog extends Dialog {
         };
 
         setContentView(new ColorPickerView(getContext(), l, mInitialColor));
-        setTitle("Pick, Then Hit Back");
+        setTitle("Select Color Then Touch Center");
     }
 }
