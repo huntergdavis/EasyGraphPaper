@@ -26,9 +26,9 @@ xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
 		android:layout_below="@+id/tableRowText"
 		android:visibility="visible" 
 		android:layout_gravity="fill_horizontal|bottom">
-		<EditText android:layout_width="fill_parent" android:numeric="decimal" android:id="@+id/width" android:layout_weight="1"
+		<EditText android:layout_width="fill_parent" android:numeric="integer" android:id="@+id/width" android:layout_weight="1"
 		android:text="640" android:layout_height="wrap_content"></EditText>
-		<EditText android:layout_width="fill_parent" android:numeric="decimal" android:id="@+id/height" android:layout_weight="1"
+		<EditText android:layout_width="fill_parent" android:numeric="integer" android:id="@+id/height" android:layout_weight="1"
 		android:text="480" android:layout_height="wrap_content"></EditText>
 	</TableRow>    
 	<TableRow android:orientation="horizontal"
